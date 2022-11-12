@@ -59,7 +59,6 @@ controller.register = (req, res) => {
                         if (!err) {
                             res.status(200).json("Correcto calvo hijueputaXD");
                         } else {
-                            console.log("no");
                             res.status(200).json("YA EXISTE ESTA CÉDULA PAPU XD");
                         }
                     });
@@ -175,32 +174,40 @@ controller.login = (req, res) => {
         });
 };
 controller.products = (req, res) => {
-    verifyToken(req, res);
-    const {
-        name, price, size, image
-    } = req.body;
-    console.log(req.body);
-    mysqlConnection.query('INSERT INTO products SET name =?,price=?, size=?,image=?', [name, price, size, image], (err, rows, fields) => {
-        if (!err) {
-            res.status(200).json("Correcto calvo hijueputaXD");
-        } else {
-            console.log("no");
-            res.status(200).json("NO SE REGISTRÓ");
-        }
-    });
+    if (req.headers.authorization == "") {
+        return res.status(401).json("TOKEN VACÍO");
+    }
+    let token = req.headers.authorization.substr(7);
+    try {
+        jwt.verify(token, 'DIEGO');
+        const {
+            name, price, size, image
+        } = req.body;
+        mysqlConnection.query('INSERT INTO products SET name =?,price=?, size=?,image=?', [name, price, size, image], (err, rows, fields) => {
+            if (!err) {
+                res.status(200).json("Correcto calvo hijueputaXD");
+            } else {
+                res.status(200).json("NO SE REGISTRÓ");
+            }
+        });
+    } catch (error) {
+        return res.status(401).json("TOKEN VACÍO,EXPIRADO O INCORRECTO");
+    }
+
 };
 
 function verifyToken(req, res, next) {
-    if (!req.headers.authorization) {
-        return res.status(401).json('NO AUTORIZADO MK');
-    } else {
+    if (req.headers.authorization != "") {
         let token = req.headers.authorization.substr(7);
+
         if (token !== '') {
             const content = jwt.verify(token, 'DIEGO');
             req.data = content;
         } else {
             res.status(200).json('HUBO UN ERROR PAPU');
         }
+    } else {
+        return res.status(200).json('HUBO UN ERROR PAPU');
     }
 }
 
