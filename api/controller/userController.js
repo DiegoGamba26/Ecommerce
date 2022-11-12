@@ -14,16 +14,7 @@ controller.list = (req, res) => {
         }
     });
 };
-controller.balance = (req, res) => {
-    const id = req.params.id;
-    mysqlConnection.query('SELECT balance FROM users WHERE id =?', [id], (err, rows, fields) => {
-        if (!err) {
-            res.status(200).json(rows[0]);
-        } else {
-            res.status(200).json('HUBO UN ERROR PAPU');
-        }
-    });
-};
+
 controller.profile = (req, res) => {
     const document = req.params.document;
     console.log(document);
@@ -53,31 +44,22 @@ controller.profileUpdate = (req, res) => {
         });
 };
 
-controller.historyTransactions = (req, res) => {
-    const id = req.query.id;
-    mysqlConnection.query('SELECT id_transactions,name,last_name,nationality,document,bank,type,amount,transaction_date FROM transactions WHERE id =? order by id_transactions asc', [id], (err, rows, fields) => {
-        if (!err) {
-            res.status(200).json(rows);
-        } else {
 
-            res.status(200).json('HUBO UN ERROR PAPU');
-        }
-    });
-};
 controller.register = (req, res) => {
     const {
         name, last_name, nationality, date_birth, document,
-        gender, email, num, pass
+        gender, email, num, pass, rol
     } = req.body;
     console.log(req.body);
     mysqlConnection.query('SELECT * FROM users WHERE document =? ', [document],
         (err, rows, fields) => {
             if (!err) {
                 if (rows = []) {
-                    mysqlConnection.query('INSERT INTO users SET name =?,last_name=?, nationality=?,date_birth=?,document=?,gender=?, email=?, num=?, pass=?, balance = 0', [name, last_name, nationality, date_birth, document, gender, email, num, pass], (err, rows, fields) => {
+                    mysqlConnection.query('INSERT INTO users SET name =?,last_name=?, nationality=?,date_birth=?,document=?,gender=?, email=?, num=?, pass=?, rol =?', [name, last_name, nationality, date_birth, document, gender, email, num, pass, rol], (err, rows, fields) => {
                         if (!err) {
                             res.status(200).json("Correcto calvo hijueputaXD");
                         } else {
+                            console.log("no");
                             res.status(200).json("YA EXISTE ESTA CÉDULA PAPU XD");
                         }
                     });
@@ -88,47 +70,7 @@ controller.register = (req, res) => {
         });
     /* */
 };
-controller.topUpBalance = (req, res) => {
-    const { document } = req.params;
-    const { balance, bank } = req.body;
-    mysqlConnection.query('SELECT balance FROM users WHERE document =?', [document],
-        (err, rows, fields) => {
-            if (!err) {
-                let result = rows[0]["balance"];
-                mysqlConnection.query('UPDATE users set balance = ? WHERE document =?', [balance + result, document],
-                    (err, rows, fields) => {
-                        if (!err) {
-                            mysqlConnection.query('SELECT * FROM users WHERE document =? ', [document],
-                                (err, rows, fields) => {
-                                    if (!err) {
-                                        let name = rows[0]["name"];
-                                        let last_name = rows[0]["last_name"];
-                                        let country = rows[0]["nationality"];
-                                        let id_transaction = rows[0]["id"];
 
-                                        let type = "recarga";
-                                        mysqlConnection.query('INSERT INTO transactions set name=?,last_name=?,nationality=?,type=?, amount = ?, document=?, bank=?,id=?', [name, last_name, country, type, balance, document, bank, id_transaction],
-                                            (err, rows, fields) => {
-                                                if (!err) {
-                                                    res.status(200).json("Correcto calvo");
-                                                } else {
-                                                    res.status(200).json('HUBO UN ERROR PAPU4');
-                                                }
-                                            });
-                                    } else {
-                                        res.status(200).json('HUBO UN ERROR PAPU3');
-                                    }
-                                });
-                        } else {
-                            res.status(200).json('HUBO UN ERROR PAPU2');
-                        }
-                    });
-            } else {
-                res.status(200).json('HUBO UN ERROR PAPU1');
-            }
-
-        });
-};
 controller.transfer = (req, res) => {
     const { document } = req.params;
     const { balance, bank, document2 } = req.body;
@@ -232,56 +174,20 @@ controller.login = (req, res) => {
 
         });
 };
-controller.verify = (req, res) => {
+controller.products = (req, res) => {
     verifyToken(req, res);
-    res.json('INFORMACIÓN SECRETA PAPI NO SEA SAPO MIJO');
-};
-controller.currency_list = (req, res) => {
-    const id = req.params.id;
-    mysqlConnection.query('SELECT balance FROM users WHERE id =?', [id], (err, rows, fields) => {
+    const {
+        name, price, size, image
+    } = req.body;
+    console.log(req.body);
+    mysqlConnection.query('INSERT INTO products SET name =?,price=?, size=?,image=?', [name, price, size, image], (err, rows, fields) => {
         if (!err) {
-            fetch("https://v6.exchangerate-api.com/v6/e1fb2a5953edbe689c1af854/latest/COP")
-                .then(response => response.text())
-                .then(result => {
-                    let result_balance = rows[0]["balance"];
-                    let USD = JSON.parse(result).conversion_rates.USD;
-                    let USD2 = parseFloat(USD.toFixed(5));
-                    let result_usd = (result_balance * USD2) / 1;
-                    let GBP = JSON.parse(result).conversion_rates.GBP;
-                    let GBP2 = parseFloat(GBP.toFixed(5));
-                    let result_gbp = (result_balance * GBP2) / 1;
-                    let EUR = JSON.parse(result).conversion_rates.EUR;
-                    let EUR2 = parseFloat(EUR.toFixed(5));
-                    let result_eur = (result_balance * EUR2) / 1;
-                    let CAD = JSON.parse(result).conversion_rates.CAD;
-                    let CAD2 = parseFloat(CAD.toFixed(5));
-                    let result_cad = (result_balance * CAD2) / 1;
-                    let JPY = JSON.parse(result).conversion_rates.JPY;
-                    let JPY2 = parseFloat(JPY.toFixed(5));
-                    let result_jpy = (result_balance * JPY2) / 1;
-                    let BRL = JSON.parse(result).conversion_rates.BRL;
-                    let BRL2 = parseFloat(BRL.toFixed(5));
-                    let result_brl = (result_balance * BRL2) / 1;
-                    let MXN = JSON.parse(result).conversion_rates.MXN;
-                    let MXN2 = parseFloat(MXN.toFixed(5));
-                    let result_mxn = (result_balance * MXN2) / 1;
-                    let RUB = JSON.parse(result).conversion_rates.RUB;
-                    let RUB2 = parseFloat(RUB.toFixed(5));
-                    let result_rub = (result_balance * RUB2) / 1;
-                    res.status(200).json({
-                        Balance: result_balance, USD: result_usd, EUR: result_eur,
-                        GBP: result_gbp, CAD: result_cad, JPY: result_jpy, BRL: result_brl, MXN: result_mxn, RUB: result_rub
-                    });
-
-                })
-                .catch(error => console.log('error', error));
-
+            res.status(200).json("Correcto calvo hijueputaXD");
         } else {
-            res.status(200).json('HUBO UN ERROR PAPU');
+            console.log("no");
+            res.status(200).json("NO SE REGISTRÓ");
         }
     });
-
-
 };
 
 function verifyToken(req, res, next) {
