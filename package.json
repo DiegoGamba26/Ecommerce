@@ -3,13 +3,14 @@
     "axios": "^0.27.2",
     "config": "^3.3.7",
     "cors": "^2.8.5",
+    "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "init": "^0.1.2",
     "jsonwebtoken": "^8.5.1",
     "mysql": "^2.18.1",
     "node-fetch": "^2.6.7",
     "nodemon": "^2.0.16",
-    "dotenv": "^16.0.1"
+    "stripe": "^10.17.0"
   },
   "scripts": {
     "start": "node api/model/server.js",
@@ -29,8 +30,5 @@
   "bugs": {
     "url": "https://github.com/DiegoGamba26/DIVISAS/issues"
   },
-  "homepage": "https://github.com/DiegoGamba26/DIVISAS#readme",
-  "devDependencies": {
-
-  }
+  "homepage": "https://github.com/DiegoGamba26/DIVISAS#readme"
 }

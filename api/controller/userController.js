@@ -3,6 +3,7 @@ const { json } = require('express/lib/response');
 const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
 const controller = {};
 const jwt = require('jsonwebtoken');
+const stripe = require('stripe')('sk_test_51M43R9KwKL8b7Q9tgNZM4Gkcl0Hdm742nNRH6uwr2J8yFz36Alg0Bk1g8orwaFAVmCi3wAhg4C74PD3p47QPsWnl00p24G7KVx');
 
 const mysqlConnection = require('../model/connection');
 controller.list = (req, res) => {
@@ -222,4 +223,17 @@ function verifyToken(req, res, next) {
         }
     }
 }
+controller.checkout = async (req, res) => {
+    const customer = await stripe.customers.create({
+        email: req.body.stripeEmail,
+        source: req.body.stripeToken
+    });
+    const charge = await stripe.charges.create({
+        amount: '3000',
+        currency: 'usd',
+        customer: customer.id,
+        description: 'Colombian jeans'
+    });
+   res.status(200).json("ALL good");
+};
 module.exports = controller;
