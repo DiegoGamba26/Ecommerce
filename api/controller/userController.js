@@ -173,7 +173,7 @@ controller.login = (req, res) => {
 
         });
 };
-controller.products = (req, res) => {
+controller.products_insert = (req, res) => {
     if (req.headers.authorization == "") {
         return res.status(401).json("TOKEN VACÍO");
     }
@@ -193,21 +193,33 @@ controller.products = (req, res) => {
     } catch (error) {
         return res.status(401).json("TOKEN VACÍO,EXPIRADO O INCORRECTO");
     }
-
 };
 
-function verifyToken(req, res, next) {
-    if (req.headers.authorization != "") {
-        let token = req.headers.authorization.substr(7);
 
+controller.products_consult = (req, res) => {
+    mysqlConnection.query('SELECT * FROM products ', [document], (err, rows, fields) => {
+        if (!err) {
+            res.status(200).json(rows);
+        } else {
+            res.status(200).json('HUBO UN ERROR PAPU');
+        }
+    });
+};
+controller.verify = (req, res) => {
+    verifyToken(req, res);
+    res.json('INFORMACIÓN SECRETA PAPI NO SEA SAPO MIJO');
+};
+function verifyToken(req, res, next) {
+    if (!req.headers.authorization) {
+        return res.status(401).json('NO AUTORIZADO MK');
+    } else {
+        let token = req.headers.authorization.substr(7);
         if (token !== '') {
             const content = jwt.verify(token, 'DIEGO');
             req.data = content;
         } else {
             res.status(200).json('HUBO UN ERROR PAPU');
         }
-    } else {
-        return res.status(200).json('HUBO UN ERROR PAPU');
     }
 }
 
