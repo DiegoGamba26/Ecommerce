@@ -213,7 +213,7 @@ controller.verify = (req, res) => {
     let token = req.headers.authorization.substr(7);
     try {
         jwt.verify(token, 'DIEGO');
-        res.json('El token aún es valido pirobohijueputajajaXDXDXD');
+        res.status(200).json({response: true });
     } catch (error) {
         return res.status(401).json("TOKEN VACÍO,EXPIRADO O INCORRECTO");
     }
