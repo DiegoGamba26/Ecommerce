@@ -207,22 +207,17 @@ controller.products_consult = (req, res) => {
     });
 };
 controller.verify = (req, res) => {
-    verifyToken(req, res);
-    res.json('INFORMACIÓN SECRETA PAPI NO SEA SAPO MIJO');
-};
-function verifyToken(req, res, next) {
-    if (!req.headers.authorization) {
-        return res.status(401).json('NO AUTORIZADO MK');
-    } else {
-        let token = req.headers.authorization.substr(7);
-        if (token !== '') {
-            const content = jwt.verify(token, 'DIEGO');
-            req.data = content;
-        } else {
-            res.status(200).json('HUBO UN ERROR PAPU');
-        }
+    if (req.headers.authorization == "") {
+        return res.status(401).json("TOKEN VACÍO");
     }
-}
+    let token = req.headers.authorization.substr(7);
+    try {
+        jwt.verify(token, 'DIEGO');
+    } catch (error) {
+        return res.status(401).json("TOKEN VACÍO,EXPIRADO O INCORRECTO");
+    }
+};
+
 controller.checkout = async (req, res) => {
     const customer = await stripe.customers.create({
         email: req.body.stripeEmail,
