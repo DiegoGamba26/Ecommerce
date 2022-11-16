@@ -198,7 +198,7 @@ controller.products_insert = (req, res) => {
 
 
 controller.products_consult = (req, res) => {
-    mysqlConnection.query('SELECT * FROM products ', [document], (err, rows, fields) => {
+    mysqlConnection.query('SELECT * FROM products ', (err, rows, fields) => {
         if (!err) {
             res.status(200).json(rows);
         } else {
