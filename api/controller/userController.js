@@ -215,7 +215,7 @@ controller.verify = (req, res) => {
         jwt.verify(token, 'DIEGO');
         res.status(200).json({response: true });
     } catch (error) {
-        return res.status(401).json("TOKEN VACÍO,EXPIRADO O INCORRECTO");
+        return res.status(401).json({response: false });
     }
 };
 
