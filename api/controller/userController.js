@@ -182,9 +182,9 @@ controller.products_insert = (req, res) => {
     try {
         jwt.verify(token, 'DIEGO');
         const {
-            name, price, size, image
+            name, price, descrption, image
         } = req.body;
-        mysqlConnection.query('INSERT INTO products SET name =?,price=?, size=?,image=?', [name, price, size, image], (err, rows, fields) => {
+        mysqlConnection.query('INSERT INTO products SET name =?,price=?, descrption=?,image=?', [name, price, descrption, image], (err, rows, fields) => {
             if (!err) {
                 res.status(200).json("Correcto calvo hijueputaXD");
             } else {
