@@ -206,6 +206,17 @@ controller.products_consult = (req, res) => {
         }
     });
 };
+
+controller.products_id = (req, res) => {
+    const { id } = req.params;
+    mysqlConnection.query('SELECT * FROM products WHERE id=? ', [id],(err, rows, fields) => {
+        if (!err) {
+            res.status(200).json(rows);
+        } else {
+            res.status(200).json('HUBO UN ERROR PAPU');
+        }
+    });
+};
 controller.verify = (req, res) => {
     if (req.headers.authorization == "") {
         return res.status(401).json("TOKEN VACÍO");

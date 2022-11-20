@@ -8,7 +8,7 @@ router.post('/login', controller.login);
 router.post('/products_insert', controller.products_insert);
 router.get('/products_consult', controller.products_consult);
 router.post('/verify', controller.verify);
-router.post('/transfer/:document', controller.transfer);
+router.post('/produtcs_id/:id', controller.products_id);
 router.get('/profile/:document', controller.profile);
 
 
