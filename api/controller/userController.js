@@ -208,8 +208,8 @@ controller.products_consult = (req, res) => {
 };
 
 controller.products_id = (req, res) => {
-    const { id } = req.params;
-    mysqlConnection.query('SELECT * FROM products WHERE id=? ', [id],(err, rows, fields) => {
+    const { id_product } = req.params;
+    mysqlConnection.query('SELECT * FROM products WHERE id_product=? ', [id_product],(err, rows, fields) => {
         if (!err) {
             res.status(200).json(rows);
         } else {
