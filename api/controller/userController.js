@@ -182,9 +182,9 @@ controller.products_insert = (req, res) => {
     try {
         jwt.verify(token, 'DIEGO');
         const {
-            name, price, descrption, image
+            name, price, descrption, image, size, cantidad
         } = req.body;
-        mysqlConnection.query('INSERT INTO products SET name =?,price=?, descrption=?,image=?', [name, price, descrption, image], (err, rows, fields) => {
+        mysqlConnection.query('INSERT INTO products SET name =?,price=?, descrption=?,image=? , size=?, cantidad=? ', [name, price, descrption, image, size, cantidad], (err, rows, fields) => {
             if (!err) {
                 res.status(200).json("Correcto calvo hijueputaXD");
             } else {
@@ -207,9 +207,10 @@ controller.products_consult = (req, res) => {
     });
 };
 
+
 controller.products_id = (req, res) => {
     const { id_product } = req.params;
-    mysqlConnection.query('SELECT * FROM products WHERE id_product=? ', [id_product],(err, rows, fields) => {
+    mysqlConnection.query('SELECT * FROM products WHERE id_product=? ', [id_product], (err, rows, fields) => {
         if (!err) {
             res.status(200).json(rows);
         } else {
@@ -224,9 +225,9 @@ controller.verify = (req, res) => {
     let token = req.headers.authorization.substr(7);
     try {
         jwt.verify(token, 'DIEGO');
-        res.status(200).json({response: true });
+        res.status(200).json({ response: true });
     } catch (error) {
-        return res.status(401).json({response: false });
+        return res.status(401).json({ response: false });
     }
 };
 
@@ -241,6 +242,6 @@ controller.checkout = async (req, res) => {
         customer: customer.id,
         description: 'Colombian jeans'
     });
-   res.status(200).json("ALL good");
+    res.status(200).json("ALL good");
 };
 module.exports = controller;
